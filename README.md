@@ -1,439 +1,143 @@
-# TF05 - Automação Avançada e Healthchecks Inteligentes
-**Disciplina:** Implementação de Software  
-**Curso:** Análise e Desenvolvimento de Sistemas - UniFAAT  
-**Aula:** 05 - Automação de Build Local  
-**Valor:** 2 pontos  
-**Prazo:** 01/04/2026 até as 22h
-
-## Objetivo
-
-Demonstrar domínio de automação de build, healthchecks avançados e scripts de manutenção para ambientes de produção.
-## Tarefa
-
-Criar um sistema de monitoramento de aplicações com healthchecks inteligentes, automação completa de deploy e scripts de manutenção.
-
-## Especificações
-
-### Sistema de Monitoramento
-Desenvolver um sistema com:
-- **Dashboard:** Interface de monitoramento
-- **API de Métricas:** Coleta de dados de saúde
-- **Banco de Dados:** Armazenamento de métricas
-- **Alertas:** Sistema de notificações
-- **Automação:** Scripts de deploy e manutenção
-
-### Requisitos Técnicos
-
-**1. Healthchecks Avançados:**
-- Múltiplos tipos de verificação (HTTP, TCP, Database)
-- Healthchecks personalizados por serviço
-- Métricas de performance (response time, throughput)
-- Alertas baseados em thresholds
-- Histórico de saúde dos serviços
-
-**2. Automação Completa:**
-- Script de build automatizado
-- Deploy com zero downtime
-- Rollback automático em caso de falha
-- Backup automático antes de deploy
-- Limpeza automática de recursos
-
-**3. Scripts de Manutenção:**
-- Limpeza de logs antigos
-- Otimização de banco de dados
-- Monitoramento de recursos do sistema
-- Relatórios automáticos de saúde
-- Backup e restore automatizados
-
-**4. Monitoramento Inteligente:**
-- Dashboard em tempo real
-- Alertas via webhook/email
-- Métricas históricas
-- Análise de tendências
-
-## Estrutura de Entrega
-
-```
-TF05/
-├── README.md
-├── docker-compose.yml
-├── dashboard/
-│   ├── Dockerfile
-│   ├── index.html
-│   ├── js/
-│   │   ├── dashboard.js
-│   │   └── charts.js
-│   └── css/
-│       └── dashboard.css
-├── api/
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── models/
-│   │   ├── metrics.py
-│   │   └── alerts.py
-│   └── healthchecks/
-│       ├── http_check.py
-│       ├── db_check.py
-│       └── custom_check.py
-├── database/
-│   ├── init.sql
-│   └── migrations/
-├── scripts/
-│   ├── build.sh
-│   ├── deploy.sh
-│   ├── rollback.sh
-│   ├── backup.sh
-│   ├── cleanup.sh
-│   └── health-monitor.sh
-├── config/
-│   ├── healthchecks.yml
-│   ├── alerts.yml
-│   └── thresholds.yml
-└── docs/
-    ├── automation.md
-    ├── healthchecks.md
-    └── maintenance.md
-```
-## Critérios de Avaliação
-
-### Healthchecks (0,8 pontos)
-- [ ] Múltiplos tipos implementados (0,2 pt)
-- [ ] Configuração via arquivo YAML (0,1 pt)
-- [ ] Métricas de performance (0,2 pt)
-- [ ] Histórico de saúde (0,2 pt)
-- [ ] Alertas funcionando (0,1 pt)
-
-### Automação (0,8 pontos)
-- [ ] Script de build completo (0,2 pt)
-- [ ] Deploy automatizado (0,2 pt)
-- [ ] Rollback funcional (0,2 pt)
-- [ ] Backup automático (0,1 pt)
-- [ ] Limpeza de recursos (0,1 pt)
-
-### Qualidade Técnica (0,4 pontos)
-- [ ] Dashboard funcional (0,2 pt)
-- [ ] Scripts bem documentados (0,1 pt)
-- [ ] Configuração flexível (0,1 pt)
-
-## Healthchecks Configuration
-```yaml
-# config/healthchecks.yml
-healthchecks:
-  web-frontend:
-    type: http
-    url: http://frontend:3000/health
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    expected_status: 200
-    expected_body: "OK"
-    
-  api-backend:
-    type: http
-    url: http://backend:5000/health
-    interval: 15s
-    timeout: 5s
-    retries: 2
-    expected_status: 200
-    headers:
-      Authorization: "Bearer health-token"
-    
-  database:
-    type: database
-    connection: "mysql://user:pass@db:3306/app"
-    query: "SELECT 1"
-    interval: 60s
-    timeout: 30s
-    retries: 5
-    
-  redis-cache:
-    type: tcp
-    host: redis
-    port: 6379
-    interval: 30s
-    timeout: 5s
-    retries: 3
-
-alerts:
-  email:
-    enabled: true
-    smtp_server: smtp.gmail.com
-    smtp_port: 587
-    username: alerts@example.com
-    password: app-password
-    recipients:
-      - admin@example.com
-      - devops@example.com
-      
-  webhook:
-    enabled: true
-    url: https://hooks.slack.com/services/xxx
-    
-thresholds:
-  response_time:
-    warning: 1000ms
-    critical: 5000ms
-  uptime:
-    warning: 95%
-    critical: 90%
-  error_rate:
-    warning: 5%
-    critical: 10%
-```
-## Scripts de Automação
-
-### build.sh
-```bash
-#!/bin/bash
-set -e
-
-echo "Iniciando build automatizado..."
-
-# Validar ambiente
-./scripts/validate-env.sh
-
-# Executar testes
-echo "Executando testes..."
-docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-
-# Build das imagens
-echo "Construindo imagens..."
-docker-compose build --no-cache
-
-# Validar imagens
-echo "Validando imagens..."
-./scripts/validate-images.sh
-
-echo "Build concluído com sucesso!"
-```
-
-### deploy.sh
-```bash
-#!/bin/bash
-set -e
-
-BACKUP_DIR="backups/$(date +%Y%m%d_%H%M%S)"
-
-echo "Iniciando deploy..."
-
-# Criar backup
-echo "Criando backup..."
-./scripts/backup.sh "$BACKUP_DIR"
-
-# Health check pré-deploy
-echo "Verificando saúde atual..."
-./scripts/health-monitor.sh --pre-deploy
-
-# Deploy com zero downtime
-echo "Executando deploy..."
-docker-compose up -d --no-deps --scale backend=2 backend-new
-sleep 30
-
-# Verificar saúde do novo serviço
-if ./scripts/health-monitor.sh --check backend-new; then
-    echo "Novo serviço saudável, finalizando deploy..."
-    docker-compose stop backend
-    docker-compose up -d --no-deps --scale backend-new=0 --scale backend=1
-else
-    echo "Falha no deploy, executando rollback..."
-    ./scripts/rollback.sh "$BACKUP_DIR"
-    exit 1
-fi
-
-echo "Deploy concluído com sucesso!"
-```
-## Dashboard de Monitoramento
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Monitoramento</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/dashboard.css">
-</head>
-<body>
-    <div class="dashboard">
-        <header>
-            <h1>Dashboard de Monitoramento</h1>
-            <div class="status-overview">
-                <div class="status-card healthy" id="overall-status">
-                    <h3>Status Geral</h3>
-                    <span class="status-indicator">●</span>
-                    <span class="status-text">Saudável</span>
-                </div>
-            </div>
-        </header>
-
-        <main>
-            <section class="services-grid">
-                <div class="service-card" id="frontend-status">
-                    <h3>Frontend</h3>
-                    <div class="metrics">
-                        <span class="metric">
-                            <label>Uptime:</label>
-                            <span id="frontend-uptime">99.9%</span>
-                        </span>
-                        <span class="metric">
-                            <label>Response Time:</label>
-                            <span id="frontend-response">120ms</span>
-                        </span>
-                    </div>
-                    <div class="status-indicator healthy">●</div>
-                </div>
-
-                <div class="service-card" id="backend-status">
-                    <h3>Backend API</h3>
-                    <div class="metrics">
-                        <span class="metric">
-                            <label>Uptime:</label>
-                            <span id="backend-uptime">99.8%</span>
-                        </span>
-                        <span class="metric">
-                            <label>Response Time:</label>
-                            <span id="backend-response">85ms</span>
-                        </span>
-                    </div>
-                    <div class="status-indicator healthy">●</div>
-                </div>
-
-                <div class="service-card" id="database-status">
-                    <h3>Database</h3>
-                    <div class="metrics">
-                        <span class="metric">
-                            <label>Uptime:</label>
-                            <span id="database-uptime">100%</span>
-                        </span>
-                        <span class="metric">
-                            <label>Connections:</label>
-                            <span id="database-connections">15/100</span>
-                        </span>
-                    </div>
-                    <div class="status-indicator healthy">●</div>
-                </div>
-            </section>
-
-            <section class="charts-section">
-                <div class="chart-container">
-                    <h3>Response Time (últimas 24h)</h3>
-                    <canvas id="responseTimeChart"></canvas>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>Uptime por Serviço</h3>
-                    <canvas id="uptimeChart"></canvas>
-                </div>
-            </section>
-
-            <section class="alerts-section">
-                <h3>Alertas Recentes</h3>
-                <div class="alerts-list" id="alerts-list">
-                    <!-- Alertas serão carregados via JavaScript -->
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script src="js/dashboard.js"></script>
-</body>
-</html>
-```
-## README.md Obrigatório
-
-```markdown
 # TF05 - Sistema de Monitoramento e Automação
 
 ## Aluno
-- **Nome:** [Seu Nome Completo]
-- **RA:** [Seu RA]
-- **Curso:** Análise e Desenvolvimento de Sistemas
+
+* **Nome:** Diogo Vieira Amorim
+* **RA:** 6324639
+* **Curso:** Análise e Desenvolvimento de Sistemas
+
+---
 
 ## Funcionalidades
-- Healthchecks inteligentes (HTTP, TCP, Database)
-- Dashboard de monitoramento em tempo real
-- Sistema de alertas (email, webhook)
-- Automação completa de deploy
-- Rollback automático
-- Scripts de manutenção
-- Backup automatizado
+
+* Healthchecks inteligentes (HTTP, TCP, Database)
+* Dashboard de monitoramento em tempo real
+* Sistema de alertas (simulado via script)
+* Automação completa de deploy
+* Rollback automático
+* Scripts de manutenção
+* Backup automatizado
+
+---
 
 ## Como Executar
 
 ### Pré-requisitos
-- Docker e Docker Compose
-- Bash (para scripts de automação)
+
+* Docker
+* Docker Compose
+* Bash (Linux/Ubuntu)
+
+---
 
 ### Execução Completa
+
 ```bash
-git clone [URL_DO_SEU_REPO]
-cd TF05
-
-# Build automatizado
-./scripts/build.sh
-
-# Deploy automatizado
-./scripts/deploy.sh
-
-# Acessar dashboard
-open http://localhost:3000
+git clone https://github.com/SEU_USUARIO/tfsImplantacaoSistemas2026.git
 ```
+```bash
+cd TF05_2026
+```
+
+# Permissões dos scripts
+```bash
+chmod +x scripts/*.sh
+```
+# Build automatizado
+```bash
+./scripts/build.sh
+```
+# Deploy automatizado
+```bash
+./scripts/deploy.sh
+```
+
+---
+
+### Acessar o Sistema
+
+* Dashboard: http://localhost:3000
+* API Métricas: http://localhost:5000/metrics
+* Health Check: http://localhost:5000/health
+
+---
 
 ## Scripts Disponíveis
-- `./scripts/build.sh` - Build automatizado com testes
-- `./scripts/deploy.sh` - Deploy com zero downtime
-- `./scripts/rollback.sh` - Rollback para versão anterior
-- `./scripts/backup.sh` - Backup de dados e configurações
-- `./scripts/cleanup.sh` - Limpeza de recursos antigos
-- `./scripts/health-monitor.sh` - Monitoramento manual
+
+```bash
+./scripts/build.sh          # Build automatizado
+```
+```bash
+./scripts/deploy.sh         # Deploy da aplicação
+```
+```bash
+./scripts/rollback.sh       # Rollback da aplicação
+```
+```bash
+./scripts/backup.sh         # Backup dos dados
+```
+```bash
+./scripts/cleanup.sh        # Limpeza de recursos Docker
+```
+```bash
+./scripts/health-monitor.sh # Monitoramento manual
+```
+
+---
 
 ## Configuração
-- **Healthchecks:** `config/healthchecks.yml`
-- **Alertas:** `config/alerts.yml`
-- **Thresholds:** `config/thresholds.yml`
 
-## Endpoints
-- **Dashboard:** http://localhost:3000
-- **API Métricas:** http://localhost:5000/metrics
-- **Health Status:** http://localhost:5000/health/status
+Arquivos localizados em:
+
+* Healthchecks: `config/healthchecks.yml`
+* Alertas: `config/alerts.yml`
+* Thresholds: `config/thresholds.yml`
+
+---
 
 ## Monitoramento
+
+# Verificar status manual
 ```bash
-# Status em tempo real
-./scripts/health-monitor.sh --watch
-
-# Relatório de saúde
-./scripts/health-monitor.sh --report
-
-# Testar alertas
-./scripts/health-monitor.sh --test-alerts
+./scripts/health-monitor.sh
 ```
 
-## Entrega
+---
 
-### Repositório GitHub
-- **Nome:** `tfsImplantacaoSistemas2026`
-- **Pasta:** `TF05/`
+## Estrutura do Projeto
 
-### Validação
-```bash
-# Teste completo de automação
-./scripts/build.sh
-./scripts/deploy.sh
-./scripts/health-monitor.sh --check-all
 ```
-## Dicas
+TF05/
+├── api/
+├── dashboard/
+├── database/
+├── scripts/
+├── config/
+├── docs/
+├── docker-compose.yml
+└── README.md
+```
 
-1. **Teste** todos os scripts antes de entregar
-2. **Implemente** rollback funcional
-3. **Configure** alertas realistas
-4. **Documente** cada script detalhadamente
-5. **Use** healthchecks específicos por serviço
+---
 
-**Automatize com inteligência!**
+## Tecnologias Utilizadas
 
-> [!NOTE]
-> **Desenvolvido por:** Professor Alexandre Tavares - UniFAAT  
-> **Versão:** 1.0 - Semestre 2026.1  
-> **Última atualização:** Janeiro 2026
+* Python (Flask)
+* Docker & Docker Compose
+* Nginx (Dashboard)
+* Bash (Automação)
+* JavaScript (Frontend)
+
+---
+
+## Observações
+
+* O sistema realiza monitoramento básico de saúde da API
+* Métricas são armazenadas em memória para fins didáticos
+* Alertas são simulados via scripts
+
+---
+
+## Autor
+
+Desenvolvido por Diogo Vieira Amorim
