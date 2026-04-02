@@ -1,6 +1,6 @@
 # TF05 - Sistema de Monitoramento e Automação
 
-## Aluno
+## 👨‍🎓 Aluno
 
 * **Nome:** Diogo Vieira Amorim
 * **RA:** 6324639
@@ -8,7 +8,7 @@
 
 ---
 
-## Funcionalidades
+## 🚀 Funcionalidades
 
 * Healthchecks inteligentes (HTTP, TCP, Database)
 * Dashboard de monitoramento em tempo real
@@ -20,9 +20,9 @@
 
 ---
 
-## Como Executar
+## ⚙️ Como Executar
 
-### Pré-requisitos
+### 📋 Pré-requisitos
 
 * Docker
 * Docker Compose
@@ -30,31 +30,25 @@
 
 ---
 
-### Execução Completa
+### ▶️ Execução Completa
 
 ```bash
-git clone https://github.com/SEU_USUARIO/tfsImplantacaoSistemas2026.git
-```
-```bash
-cd TF05_2026
-```
+git clone https://github.com/vieira-dih/TF05-Automacao-Avancada-Healthchecks.git
+cd TF05-Automacao-Avancada-Healthchecks
 
-# Permissões dos scripts
-```bash
+# Dar permissão aos scripts
 chmod +x scripts/*.sh
-```
+
 # Build automatizado
-```bash
 ./scripts/build.sh
-```
+
 # Deploy automatizado
-```bash
 ./scripts/deploy.sh
 ```
 
 ---
 
-### Acessar o Sistema
+## 🌐 Acessar o Sistema
 
 * Dashboard: http://localhost:3000
 * API Métricas: http://localhost:5000/metrics
@@ -62,52 +56,42 @@ chmod +x scripts/*.sh
 
 ---
 
-## Scripts Disponíveis
+## 🧪 Scripts Disponíveis
 
 ```bash
 ./scripts/build.sh          # Build automatizado
-```
-```bash
 ./scripts/deploy.sh         # Deploy da aplicação
-```
-```bash
 ./scripts/rollback.sh       # Rollback da aplicação
-```
-```bash
 ./scripts/backup.sh         # Backup dos dados
-```
-```bash
 ./scripts/cleanup.sh        # Limpeza de recursos Docker
-```
-```bash
 ./scripts/health-monitor.sh # Monitoramento manual
 ```
 
 ---
 
-## Configuração
+## 🔧 Configuração
 
 Arquivos localizados em:
 
-* Healthchecks: `config/healthchecks.yml`
-* Alertas: `config/alerts.yml`
-* Thresholds: `config/thresholds.yml`
+* `config/healthchecks.yml` → Configuração dos healthchecks
+* `config/alerts.yml` → Configuração de alertas
+* `config/thresholds.yml` → Limites de métricas
 
 ---
 
-## Monitoramento
+## 📊 Monitoramento
 
-# Verificar status manual
 ```bash
+# Verificar status manual
 ./scripts/health-monitor.sh
 ```
 
 ---
 
-## Estrutura do Projeto
+## 🌳 Estrutura do Projeto
 
 ```
-TF05_2026/
+TF05-Automacao-Avancada-Healthchecks/
 ├── LICENSE
 ├── README.md
 ├── docker-compose.yml
@@ -115,11 +99,9 @@ TF05_2026/
 ├── api/
 │   ├── Dockerfile
 │   ├── app.py
-│   │
 │   ├── models/
 │   │   ├── metrics.py
 │   │   └── alerts.py
-│   │
 │   └── healthchecks/
 │       ├── http_check.py
 │       ├── db_check.py
@@ -128,11 +110,9 @@ TF05_2026/
 ├── dashboard/
 │   ├── Dockerfile
 │   ├── index.html
-│   │
 │   ├── js/
 │   │   ├── dashboard.js
 │   │   └── charts.js
-│   │
 │   └── css/
 │       └── dashboard.css
 │
@@ -161,7 +141,7 @@ TF05_2026/
 
 ---
 
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 * Python (Flask)
 * Docker & Docker Compose
@@ -171,14 +151,14 @@ TF05_2026/
 
 ---
 
-## Observações
+## 📌 Observações
 
 * O sistema realiza monitoramento básico de saúde da API
-* Métricas são armazenadas em memória para fins didáticos
+* Métricas são armazenadas em memória (modelo didático)
 * Alertas são simulados via scripts
 
 ---
 
-## Autor
+## 👨‍💻 Autor
 
-Desenvolvido por Diogo Vieira Amorim
+Desenvolvido por **Diogo Vieira Amorim**
