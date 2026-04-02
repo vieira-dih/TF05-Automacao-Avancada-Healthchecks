@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./api
+    container_name: api
+    ports:
+      - "5000:5000"
+
+  dashboard:
+    build: ./dashboard
+    container_name: dashboard
+    ports:
+      - "3000:80"
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: app
